@@ -1,0 +1,6 @@
+@Askfm_Clone_HostAddress = http://localhost:5180
+
+GET {{Askfm_Clone_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
