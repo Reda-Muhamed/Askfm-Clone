@@ -4,6 +4,7 @@ using Askfm_Clone.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Askfm_Clone.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250901201359_AddRefreshTokenToUser")]
+    partial class AddRefreshTokenToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,10 +87,14 @@ namespace Askfm_Clone.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
+                    b.Property<string>("RefreshTokenHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -261,21 +268,7 @@ namespace Askfm_Clone.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DeviceId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUsedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Revoked")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Token")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
@@ -285,7 +278,7 @@ namespace Askfm_Clone.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokensInfo");
+                    b.ToTable("RefreshTokenInfos");
                 });
 
             modelBuilder.Entity("Askfm_Clone.Data.Answer", b =>
@@ -416,7 +409,7 @@ namespace Askfm_Clone.Migrations
             modelBuilder.Entity("Askfm_Clone.Data.RefreshTokenInfo", b =>
                 {
                     b.HasOne("Askfm_Clone.Data.AppUser", "User")
-                        .WithMany("RefreshTokens")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -452,8 +445,6 @@ namespace Askfm_Clone.Migrations
                     b.Navigation("QuestionsReceived");
 
                     b.Navigation("QuestionsSent");
-
-                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }
